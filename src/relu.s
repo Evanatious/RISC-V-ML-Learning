@@ -18,7 +18,7 @@ relu:
     sw s2, 8(sp)
     sw s1, 4(sp)
     sw s0, 0(sp)
-    add t0, x0, x0
+    li t0, 0
     add s0, x0, a0
     blt x0, a1, loop_start
     li a0 36
