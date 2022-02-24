@@ -60,7 +60,7 @@ loop_start:
     add t4, t4, s1
     lw t5, 0(t4)
     # sum the elements in the 2 arrays into a0
-	mul t6, t3, t5
+	mul t6, t4, t5
     add t0, t0, t6
     
 	addi t1, t1, 1
