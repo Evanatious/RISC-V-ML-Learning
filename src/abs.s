@@ -9,6 +9,7 @@
 #   a0 (int) the absolute value of the input
 # =================================================================
 abs:
+	ebreak
 	bge a0, zero, done
 
   	# Negate a0
