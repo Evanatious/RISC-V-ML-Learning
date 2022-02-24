@@ -19,14 +19,25 @@
 # =======================================================
 dot:
 	#Prologue
-    addi sp, sp, -12
+    addi sp, sp, -20
     sw s0, 0(sp)
     sw s1, 4(sp)
-    sw ra, 8(sp)
+    sw s2, 8(sp)
+    sw s3, 12(sp)
+    sw s4, 16(sp)
+    add s0, a0, x0
+    add s1, a1, x0
+    add s2, a2, x0
+    add s3, a3, x0
+    add s4, a4, x0
 	li t1 1
     blt a2, t1, code_36
 	blt a3, t1, code_37
     blt a4, t1, code_37
+    # t0 is the running sum for the dot product
+    li t0, 0
+    # t1 is the iteration counter
+    li t1, 0
     j loop_start   
     code_36: # length of array < 1
         li a0, 36
@@ -36,22 +47,22 @@ dot:
         j exit
 
 loop_start:
-	beq t1, a2, loop_end
+
+	beq t1, s2, loop_end
 	# advance a0 by a3 elems
-    slli t2, a3, 2
-    mul t2, t2, t1
-    add t2, t2, a0
-    lw s0, 0(t2)
+   	mul t2, t1, s3
+    slli t2, t2, 2
+    add t2, t2, s0
+    lw t3, 0(t2)
     # advance a1 by a4 elems
-    slli t3, a3, 2
-    mul t3, t3, a4
-    add t6, t3, a1
-    lw s1, 0(t6)
+    mul t4, t1, s4
+    slli t4, t4, 2
+    add t4, t4, s1
+    lw t5, 0(t4)
     # sum the elements in the 2 arrays into a0
-	mul t4, s0, s1
-    add t0, t0, t4
-
-
+	mul t6, t3, t5
+    add t0, t0, t6
+    
 	addi t1, t1, 1
     j loop_start
 
@@ -59,7 +70,9 @@ loop_end:
 	# Epilogue
 	lw s0, 0(sp)
     lw s1, 4(sp)
-    lw ra, 8(sp)
-    addi sp, sp, 12
+    lw s2, 8(sp)
+    lw s3, 12(sp)
+    lw s4, 16(sp)
+    addi sp, sp, 20
 	add a0, x0, t0
 	ret
