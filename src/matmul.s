@@ -82,7 +82,7 @@ inner_loop_start:
     sw a0, 0(s6)
     addi s7, s7, 4
     addi s9, s9, 1
-    addi s6, s6, 1
+    addi s6, s6, 4
     j inner_loop_start
 
 
