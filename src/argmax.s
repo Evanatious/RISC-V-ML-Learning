@@ -46,6 +46,8 @@ loop_end:
     add a0, x0, s0
 
     # Epilogue
+    lw s0, 0(sp)
+    lw s1, 4(sp)
     lw s2, 8(sp)
     addi sp, sp 12
     ret
