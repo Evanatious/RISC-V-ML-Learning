@@ -55,7 +55,7 @@ matmul:
     add s6, x0, a6
     
     # iteration counter
-    li t0 0
+    li s8 0
     j outer_loop_start
     
     
@@ -64,14 +64,14 @@ code_38: # width of m0 != height of m1 || width/height of a matrix < 1
   	j exit
 
 outer_loop_start:
-	beq s7, s1, outer_loop_end
-    li t1 0
+	beq s8, s1, outer_loop_end
+    li s9 0
     add s7, s3, x0
 
 
 
 inner_loop_start:
-	beq t1, s5, inner_loop_end
+	beq s9, s5, inner_loop_end
     add a0, s0, x0
     add a1, s7, x0
     add a2, s2, x0
@@ -81,7 +81,7 @@ inner_loop_start:
 	jal ra dot
     sw a0, 0(s6)
     addi s7, s7, 4
-    addi t1, t1, 1
+    addi s9, s9, 1
     addi s6, s6, 1
     j inner_loop_start
 
@@ -90,8 +90,8 @@ inner_loop_start:
 inner_loop_end:
 	slli t2, s2, 2
     add s0, s0, t2
-    addi t0, t0, 1
-
+    addi s8, s8, 1
+	j outer_loop_start
 
 
 outer_loop_end:
