@@ -19,6 +19,11 @@
 # =======================================================
 dot:
 	#Prologue
+    li t1 1
+    blt a2, t1, code_36
+    blt a3, t1, code_37
+    blt a4, t1, code_37
+
     addi sp, sp, -20
     sw s0, 0(sp)
     sw s1, 4(sp)
@@ -30,10 +35,7 @@ dot:
     add s2, a2, x0
     add s3, a3, x0
     add s4, a4, x0
-	li t1 1
-    blt a2, t1, code_36
-	blt a3, t1, code_37
-    blt a4, t1, code_37
+
     # t0 is the running sum for the dot product
     li t0, 0
     # t1 is the iteration counter
@@ -60,7 +62,7 @@ loop_start:
     add t4, t4, s1
     lw t5, 0(t4)
     # sum the elements in the 2 arrays into a0
-	mul t6, t4, t5
+	mul t6, t3, t5
     add t0, t0, t6
     
 	addi t1, t1, 1
