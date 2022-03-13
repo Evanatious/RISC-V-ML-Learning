@@ -87,33 +87,124 @@ classify:
     beq a0, x0, malloc_error
     mv s6, a0
     # set up arguments for read_matrix
-    lw a0, 8(s0) # acesss m0 == a1[2]
+    lw a0, 8(s0) # acesss m1 == a1[2]
 	mv a1, s5
     mv a2, s6
 	jal read_matrix
-    mv s7, a0 # s4 has m0
-    lw s5, 0(s5) # s5 is num rows of m1
-    lw s6, 0(s6) # s6 is num cols of m1
+    mv s7, a0 # s7 has m1 (a pointer to the matrix in memory)
+    # free memory and just keep the values
+    lw s11, 0(s5) # gonna overwrite s11 later, using it as a temp rn
+    mv a0, s5
+    jal free
+    mv s5, s11 # s5 is num rows of m1
+    lw s11, 0(s6)
+    mv a0, s6
+    jal free
+    mv s6, s11 # s6 is num cols of m1
 
 	# Read input matrix
+	li a0, 4
+    jal malloc # malloc for read_matrix a1
+    beq a0, x0, malloc_error
+    mv s8, a0
+    li a0, 4
+    jal malloc # malloc for read_matrix a2
+    beq a0, x0, malloc_error
+    mv s9, a0
+    # set up arguments for read_matrix
+    lw a0, 12(s0) # acesss input matrix == a1[3]
+	mv a1, s8
+    mv a2, s9
+	jal read_matrix
+    mv s10, a0 # s10 has input matrix (a pointer to the matrix in memory)
+    # free memory and just keep the values
+    lw s11, 0(s8) # gonna overwrite s11 later, using it as a temp rn
+    mv a0, s8
+    jal free
+    mv s8, s11 # s8 is num rows of input matrix
+    lw s11, 0(s9)
+    mv a0, s9
+    jal free
+    mv s9, s11 # s9 is num cols of input matrix
 
+	# at this point we have loaded all of our matrices and have the dimensions of each of them saved
 
 	# Compute h = matmul(m0, input)
-
+    # need to malloc rows of m0 * cols of input * 4
+	mul t0, s2, s9
+    slli a0, t0, 2
+    jal malloc
+    beq a0, x0, malloc_error
+    mv s11, a0 # s11 contains a pointer to h
+    # set up arguments for matmul
+    mv a0, s4
+    mv a1, s2
+    mv a2, s3
+    mv a3, s10
+    mv a4, s8
+    mv a5, s9
+    mv a6, s11
+    jal matmul # now s11 contains h
 
 	# Compute h = relu(h)
+    mv a0, s11
+    mul a1, s2, s9
+    jal relu
 
+	# done with m0 so s4 all free now
+    mv a0, s4
+    jal free
+	
+    # Compute o = matmul(m1, h)
+    # malloc rows of m1 * cols of h (cols of h == cols of input)
+	mul t0, s5, s9
+    slli a0, t0, 2
+    jal malloc
+    beq a0, x0, malloc_error
+    mv s4, s0 # s4 contains a pointer to o
+    # set up arguments for matmul
+    mv a0, s7
+    mv a1, s5
+    mv a2, s6
+    mv a3, s11
+    mv a4, s2 # rows of h is the same as rows of m0
+    mv a5, s9 # cols of h is the same as cols of input matrix
+    mv a6, s4
+    jal matmul # s4 has o
+    
+    # done with m1 and input matrix, and h so can free now
+    mv a0, s7
+    jal free
+    mv a0, s10
+    jal free
+    mv a0, s11
+    jal free
 
-	# Compute o = matmul(m1, h)
-
-
-	# Write output matrix o
-
-
+	# Write output matrix o into a1[4]
+    lw a0, 16(s0)
+    mv a1, s4
+    mv a2, s5 # num rows of m1
+    mv a3, s9 # num cols of h
+    jal write_matrix
+	
 	# Compute and return argmax(o)
-
+	mv a0, s4
+    mul a1, s5, s9
+    jal argmax
+    mv s2, a0 # 99.99% sure we're not using s2
 
 	# If enabled, print argmax(o) and newline
+    li t0, 1
+	beq s1, t0, no_print
+    mv a0, s2
+    jal print_int
+    li a0, '\n'
+    jal print_char
+    no_print:
+    
+    # free EVERYTHING (I think just o at this point)
+    mv a0, s4
+    jal free
 
 	# Epilogue
     addi sp, sp, 52
