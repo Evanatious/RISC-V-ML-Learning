@@ -205,9 +205,11 @@ classify:
     # free EVERYTHING (I think just o at this point)
     mv a0, s4
     jal free
-
+	
+    
+	mv a0, s2
+    
 	# Epilogue
-    addi sp, sp, 52
     lw ra, 0(sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
@@ -221,6 +223,9 @@ classify:
     lw s9, 40(sp)
     lw s10, 44(sp)
     lw s11, 48(sp)
+    addi sp, sp, 52
+    
+    
 	ret
     
     malloc_error:
