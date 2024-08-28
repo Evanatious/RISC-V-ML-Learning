@@ -1,5 +1,4 @@
-# 61C Spring 2022 Project 2: CS61Classify
+This RISC-V program reads pictures of handwritten digits from a file, then classifies them to whatever digit they are!
 
 Spec: [https://cs61c.org/sp22/projects/proj2/](https://cs61c.org/sp22/projects/proj2/)
 
-TODO: describe what you did
